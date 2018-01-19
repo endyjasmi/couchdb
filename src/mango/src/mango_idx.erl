@@ -73,9 +73,9 @@ get_usable_indexes(Db, Selector, Opts) ->
     UsableIndexes0 = lists:filter(UsableFilter, FilteredIndexes),
 
     case maybe_filter_by_sort_fields(UsableIndexes0, SortFields) of
-        {ok, SortIndexes} -> 
+        {ok, SortIndexes} ->
             SortIndexes;
-        {error, no_usable_index} -> 
+        {error, no_usable_index} ->
             ?MANGO_ERROR({no_usable_index, missing_sort_index})
     end.
 
@@ -196,7 +196,7 @@ from_ddoc(Db, {Props}) ->
         _ ->
             ?MANGO_ERROR(invalid_query_ddoc_language)
     end,
-    IdxMods = case module_loaded(dreyfus_index) of
+    IdxMods = case module_loaded(dreyfus_index_manager) of
         true ->
             [mango_idx_view, mango_idx_text];
         false ->
@@ -277,7 +277,7 @@ cursor_mod(#idx{type = <<"json">>}) ->
 cursor_mod(#idx{def = all_docs, type= <<"special">>}) ->
     mango_cursor_special;
 cursor_mod(#idx{type = <<"text">>}) ->
-    case module_loaded(dreyfus_index) of
+    case module_loaded(dreyfus_index_manager) of
         true ->
             mango_cursor_text;
         false ->
@@ -290,7 +290,7 @@ idx_mod(#idx{type = <<"json">>}) ->
 idx_mod(#idx{type = <<"special">>}) ->
     mango_idx_special;
 idx_mod(#idx{type = <<"text">>}) ->
-    case module_loaded(dreyfus_index) of
+    case module_loaded(dreyfus_index_manager) of
         true ->
             mango_idx_text;
         false ->
@@ -318,7 +318,7 @@ get_idx_def(Opts) ->
 get_idx_type(Opts) ->
     case proplists:get_value(type, Opts) of
         <<"json">> -> <<"json">>;
-        <<"text">> -> case module_loaded(dreyfus_index) of
+        <<"text">> -> case module_loaded(dreyfus_index_manager) of
             true ->
                 <<"text">>;
             false ->
